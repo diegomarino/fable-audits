@@ -18,6 +18,8 @@ jobs:
         run: node dev/scripts/validate-report.mjs dev/fixtures/fixes-backlog-2026-01-01.md
       - name: Validator handles reports nested in a run directory
         run: node dev/scripts/validate-report.mjs dev/fixtures/2026-01-01-abcdefa/codebase-audit-2026-01-01.md
+      - name: Validator accepts real-world heading + capitalized severity
+        run: node dev/scripts/validate-report.mjs dev/fixtures/docs-audit-heading-variant.md
       - name: Validator rejects wrong ID prefixes
         run: |
           ! node dev/scripts/validate-report.mjs dev/fixtures/docs-audit-bad-prefix.md

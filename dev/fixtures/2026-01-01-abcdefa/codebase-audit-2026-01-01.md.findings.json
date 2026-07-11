@@ -1,10 +1,13 @@
 {
   "audit": "codebase",
-  "snapshot": { "sha": "0123456789abcdef0123456789abcdef01234567", "dirty": false },
+  "snapshot": {
+    "sha": "0123456789abcdef0123456789abcdef01234567",
+    "dirty": false
+  },
   "findings": [
     {
       "id": "C1",
-      "severity": "high",
+      "severity": "High",
       "evidence": "CONFIRMED",
       "issue": "Off-by-one drops the last record of every batch",
       "scenario": "A 100-record batch writes 99 records; loop bound `i < n - 1` at src/parse.js:42",
@@ -17,7 +20,7 @@
     },
     {
       "id": "C2",
-      "severity": "medium",
+      "severity": "Medium",
       "evidence": "PLAUSIBLE",
       "issue": "Default retry count contradicts documented value",
       "scenario": "README promises 3 retries; src/config.js:7 sets 1",

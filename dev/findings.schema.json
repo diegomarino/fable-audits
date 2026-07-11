@@ -4,7 +4,7 @@
   "description": "Machine-readable companion to a fable-audit markdown report. The sidecar's finding IDs must exactly match the report's summary table.",
   "$defs": {
     "evidenceLabel": { "enum": ["CONFIRMED", "PLAUSIBLE", "BLOCKED", "NOT REPRODUCED"] },
-    "severity": { "enum": ["critical", "high", "medium", "low"] }
+    "severity": { "enum": ["Critical", "High", "Medium", "Low"] }
   },
   "type": "object",
   "required": ["audit", "snapshot", "findings"],
@@ -60,7 +60,7 @@
           },
           "unresolved_from": { "type": "string", "description": "Prior report's ID when this finding persists across runs" }
         },
-        "if": { "properties": { "severity": { "enum": ["critical", "high"] } }, "required": ["severity"] },
+        "if": { "properties": { "severity": { "enum": ["Critical", "High"] } }, "required": ["severity"] },
         "then": { "required": ["acceptance_check"] }
       }
     }

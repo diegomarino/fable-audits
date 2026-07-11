@@ -24,6 +24,13 @@ const AUDITS = schema.properties.audit.enum;
 const ID_RE = new RegExp(schema.properties.findings.items.properties.id.pattern);
 const LINE_MIN = schema.properties.findings.items.properties.line_start.minimum;
 
+// Severity/evidence are compared case-insensitively: agents emit "High" (matching
+// the prose scale) and evidence UPPERCASE, but neither casing should be load-bearing.
+const SEV_SET = new Set(SEVERITY.map((s) => s.toLowerCase()));
+const okSeverity = (v) => typeof v === 'string' && SEV_SET.has(v.toLowerCase());
+const okEvidence = (v) => typeof v === 'string' && EVIDENCE.includes(v.toUpperCase());
+const isHighSev = (v) => typeof v === 'string' && ['critical', 'high'].includes(v.toLowerCase());
+
 const KIND = {
   'codebase-audit': { prefix: 'C', audit: 'codebase' },
   'docs-audit': { prefix: 'D', audit: 'docs' },
@@ -40,26 +47,21 @@ const kindKey = Object.keys(KIND).find((k) => name.startsWith(k));
 if (!kindKey) errors.push(`filename "${name}" matches no known report type (${Object.keys(KIND).join(', ')})`);
 const kind = kindKey ? KIND[kindKey] : null;
 
-// Finding IDs come from the Summary table section only -- other tables in the
-// report (authz matrices, exit-code tables) may legitimately use ID-like row
-// keys and must not be scanned.
+// The summary table is the report's first section, so its rows are the first
+// contiguous run of ID-prefixed table rows (| C1 | ... |). Scanning for that
+// pattern rather than a literal "Summary table" heading tolerates heading
+// variants (## 1. Summary table, ## 1 · Summary) while still skipping later
+// tables (authz matrices, exit-code tables) whose row keys aren't ID-prefixed.
 const lines = md.split('\n');
-const start = lines.findIndex((l) => /summary table/i.test(l));
+const ROW_RE = /^\|\s*([A-Z]+\d+)\s*\|/;
 const rows = [];
-if (start === -1) {
-  errors.push('no "Summary table" section found');
-} else {
-  let inTable = false;
-  for (let i = start + 1; i < lines.length; i++) {
-    const isTableLine = lines[i].trimStart().startsWith('|');
-    if (inTable && !isTableLine) break;
-    if (isTableLine) {
-      inTable = true;
-      if (/^\|\s*[A-Z]+\d+\s*\|/.test(lines[i])) rows.push(lines[i]);
-    }
-  }
+let startedTable = false;
+for (const l of lines) {
+  if (ROW_RE.test(l)) { rows.push(l); startedTable = true; }
+  else if (startedTable && !l.trimStart().startsWith('|')) break;
 }
-const ids = rows.map((l) => l.match(/^\|\s*([A-Z]+\d+)\s*\|/)[1]);
+if (!rows.length) errors.push('no summary-table rows (| ID | ... |) found');
+const ids = rows.map((l) => l.match(ROW_RE)[1]);
 
 const dupes = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
 if (dupes.length) errors.push(`duplicate finding IDs: ${dupes.join(', ')}`);
@@ -74,7 +76,7 @@ if (kind) {
   // only for the five audit report types.
   if (kind.audit !== 'backlog') {
     for (const l of rows) {
-      if (!EVIDENCE.some((e) => l.includes(e))) {
+      if (!EVIDENCE.some((e) => l.toUpperCase().includes(e))) {
         errors.push(`summary row lacks an evidence label: ${l.slice(0, 70)}`);
       }
     }
@@ -107,7 +109,7 @@ if (!existsSync(sidecarPath)) {
       for (const f of sc.findings) {
         const where = f.id ?? '<no id>';
         if (!f.id || !ID_RE.test(f.id)) errors.push(`${where}: missing or malformed id`);
-        if (!SEVERITY.includes(f.severity)) errors.push(`${where}: bad severity "${f.severity}"`);
+        if (!okSeverity(f.severity)) errors.push(`${where}: bad severity "${f.severity}"`);
         if (!f.issue) errors.push(`${where}: missing "issue"`);
         for (const k of ['line_start', 'line_end']) {
           if (f[k] !== undefined && !(Number.isInteger(f[k]) && f[k] >= LINE_MIN)) errors.push(`${where}: ${k} must be an integer >= ${LINE_MIN}`);
@@ -117,15 +119,15 @@ if (!existsSync(sidecarPath)) {
             errors.push(`${where}: backlog entry needs evidence_provenance [{cited_id, evidence}] -- never one collapsed label`);
           } else {
             for (const p of f.evidence_provenance) {
-              if (!p.cited_id || !EVIDENCE.includes(p.evidence)) errors.push(`${where}: bad provenance entry ${JSON.stringify(p)}`);
+              if (!p.cited_id || !okEvidence(p.evidence)) errors.push(`${where}: bad provenance entry ${JSON.stringify(p)}`);
             }
           }
           if (!Array.isArray(f.cited_ids) || !f.cited_ids.length) errors.push(`${where}: backlog entry needs cited_ids`);
           if (!f.behavioral_description) errors.push(`${where}: backlog entry needs behavioral_description`);
-        } else if (!EVIDENCE.includes(f.evidence)) {
+        } else if (!okEvidence(f.evidence)) {
           errors.push(`${where}: bad evidence "${f.evidence}"`);
         }
-        if (['critical', 'high'].includes(f.severity) && !f.acceptance_check) {
+        if (isHighSev(f.severity) && !f.acceptance_check) {
           errors.push(`${where}: Critical/High finding without acceptance_check`);
         }
       }

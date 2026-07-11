@@ -1,16 +1,28 @@
 {
   "audit": "backlog",
-  "snapshot": { "sha": "0123456789abcdef0123456789abcdef01234567", "dirty": false },
+  "snapshot": {
+    "sha": "0123456789abcdef0123456789abcdef01234567",
+    "dirty": false
+  },
   "findings": [
     {
       "id": "F1",
-      "severity": "high",
+      "severity": "High",
       "issue": "Off-by-one drops the last record of every batch",
       "behavioral_description": "Batch ingestion silently loses the final record of every batch",
-      "cited_ids": ["C1", "D2"],
+      "cited_ids": [
+        "C1",
+        "D2"
+      ],
       "evidence_provenance": [
-        { "cited_id": "C1", "evidence": "CONFIRMED" },
-        { "cited_id": "D2", "evidence": "PLAUSIBLE" }
+        {
+          "cited_id": "C1",
+          "evidence": "CONFIRMED"
+        },
+        {
+          "cited_id": "D2",
+          "evidence": "PLAUSIBLE"
+        }
       ],
       "file": "src/parse.js",
       "line_start": 42,

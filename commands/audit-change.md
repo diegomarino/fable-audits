@@ -58,7 +58,7 @@ Severity scale:
 # Output
 Write full report -> docs/audits/change-audit-<YYYY-MM-DD>.md. Create dir if missing; if the filename already exists, suffix -2, -3... Read prior change-audit reports for the same base/branch first -- glob change-audit-*.md across flat docs/audits/ and <date>-<sha> run directories, matching by snapshot.base_ref (or diff_checksum for working-tree runs) in each candidate's sidecar: mark persisting findings UNRESOLVED citing the prior report and ID. Leave uncommitted (maintainer owns git).
 Alongside the report, write <report-path>.findings.json -- machine-readable sidecar: top level {audit: "change", snapshot: {sha, dirty, base_ref or diff_checksum}}, findings[] with one entry per finding {id, severity, evidence, issue, scenario, file, line_start, line_end, recommended_direction, acceptance_check (Critical/High only)}. Same finding set as the report: the sidecar serves validators and fixing agents, the markdown serves humans.
-Every finding = stable ID within this report (X1, X2... severity order); a fixing agent cites these.
+Every finding = stable ID within this report (X1, X2... severity order); a fixing agent cites these. An ID is the prefix plus a plain integer only -- never suffixed or compound (no X-NEW-1, no X1a); new findings just continue the sequence. In the sidecar, severity matches the report's wording (Critical/High/Medium/Low).
 Sections, top-heavy:
 1. Verdict: ship / needs-attention, one paragraph written as a ship/no-ship assessment, not a neutral recap.
 2. Summary table: ID | severity | area | one-line issue | file:line | evidence label.

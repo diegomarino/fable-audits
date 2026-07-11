@@ -1,0 +1,23 @@
+{
+  "audit": "docs",
+  "snapshot": { "sha": "0123456789abcdef0123456789abcdef01234567", "dirty": false },
+  "findings": [
+    {
+      "id": "D1",
+      "severity": "High",
+      "evidence": "CONFIRMED",
+      "issue": "Documented flag --wait-timeout renamed in code",
+      "file": "README.md",
+      "line_start": 150,
+      "acceptance_check": "grep -q wait-timeout $(git ls-files 'src/**')"
+    },
+    {
+      "id": "D2",
+      "severity": "Medium",
+      "evidence": "CONFIRMED",
+      "issue": "CI Node matrix drift",
+      "file": "docs/release-checklist.md",
+      "line_start": 26
+    }
+  ]
+}

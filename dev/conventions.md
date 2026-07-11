@@ -100,6 +100,14 @@ and the report's summary table must contain the same ID set --
 `dev/scripts/validate-report.mjs` checks this. The markdown is for humans; the
 sidecar is for validators, the orchestrator, and fixing agents.
 
+Casing and IDs (learned from the first live run): `severity` is written
+`Critical/High/Medium/Low` to match the prose scale, `evidence` UPPERCASE; the
+validator compares both case-insensitively so neither casing is load-bearing.
+A finding ID is a prefix plus a plain integer (`C1`, `P12`) -- never suffixed
+or compound (`P-NEW-1`, `C1a`). The validator finds the summary table as the
+first contiguous run of ID-prefixed rows, so the section heading text
+(`## 1. Summary table` vs `## 1 · Summary`) is not load-bearing either.
+
 Two audit-specific variants: backlog entries replace the single `evidence`
 with `evidence_provenance` (`[{cited_id, evidence}]`, one per merged source --
 evidence labels are never collapsed) plus `cited_ids` and

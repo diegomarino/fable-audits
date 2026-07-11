@@ -67,7 +67,7 @@ Severity scale:
 # Output
 Write full report -> docs/audits/docs-audit-<YYYY-MM-DD>.md. Create dir if missing; if the filename already exists, suffix -2, -3... Read prior reports in docs/audits/ first, including <date>-<sha> run directories from orchestrated suites: mark persisting findings UNRESOLVED citing the prior report and ID; note previously reported findings now fixed. Leave uncommitted (maintainer owns git).
 Alongside the report, write <report-path>.findings.json -- machine-readable sidecar: top level {audit: "docs", snapshot: {sha, dirty}}, findings[] with one entry per finding {id, severity, evidence, issue, scenario, file, line_start, line_end, recommended_direction, acceptance_check (Critical/High only)}. Same finding set as the report: the sidecar serves validators and fixing agents, the markdown serves humans.
-Every finding = stable ID within this report (D1, D2... severity order); a fixing agent cites these.
+Every finding = stable ID within this report (D1, D2... severity order); a fixing agent cites these. An ID is the prefix plus a plain integer only -- never suffixed or compound (no D-NEW-1, no D1a); new findings just continue the sequence. In the sidecar, severity matches the report's wording (Critical/High/Medium/Low).
 Sections, top-heavy (summary + map first, detail last) -- practice the pyramid you preach:
 1. Summary table: ID | severity | document | one-line issue | evidence label.
 2. Doc map: current vs proposed. Proposed tree = purpose + audience per doc + the splits/merges from hunt #3; a maintainer executes it directly. Include migration notes: per moved/renamed/merged doc, whether to leave a stub/redirect so inbound links survive.

@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Validator hardening from the first live run (full suite on a real repo): the
+  report validator now finds the summary table by its ID-prefixed rows rather
+  than a literal "Summary table" heading, and compares severity/evidence
+  case-insensitively -- real agents emit `## 1 · Summary` headings and
+  capitalized `High` severity, which the initial contract wrongly rejected.
+- Finding-ID rule spelled out in every audit spec: prefix + plain integer only,
+  no compound IDs like `P-NEW-1`.
+- Regression fixture (`docs-audit-heading-variant`) locking the above into CI.
+
 ## 0.1.0 -- 2026-07-11
 
 Initial release.

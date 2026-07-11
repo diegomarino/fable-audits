@@ -62,7 +62,7 @@ Severity scale:
 # Output
 Write full report -> docs/audits/codebase-audit-<YYYY-MM-DD>.md. Create dir if missing; if the filename already exists, suffix -2, -3... Read prior reports in docs/audits/ first, including <date>-<sha> run directories from orchestrated suites: mark persisting findings UNRESOLVED citing the prior report and ID; note previously reported findings now fixed. Leave uncommitted (maintainer owns git).
 Alongside the report, write <report-path>.findings.json -- machine-readable sidecar: top level {audit: "codebase", snapshot: {sha, dirty}}, findings[] with one entry per finding {id, severity, evidence, issue, scenario, file, line_start, line_end, recommended_direction, acceptance_check (Critical/High only)}. Same finding set as the report: the sidecar serves validators and fixing agents, the markdown serves humans.
-Every finding = stable ID within this report (C1, C2... severity order); a fixing agent cites these.
+Every finding = stable ID within this report (C1, C2... severity order); a fixing agent cites these. An ID is the prefix plus a plain integer only -- never suffixed or compound (no C-NEW-1, no C1a); new findings just continue the sequence. In the sidecar, severity matches the report's wording (Critical/High/Medium/Low).
 Sections, top-heavy (summary + map first, detail last):
 1. Summary table: ID | severity | area | one-line issue | file:line | evidence label.
 2. System map: architecture, real execution paths, key invariants -- so I can check your understanding. Label load-bearing facts (entry points, paths, invariants) with evidence labels; a cross-audit synthesizer relies on them.

@@ -54,7 +54,7 @@ Severity scale:
 # Output
 Write full report -> docs/audits/security-audit-<YYYY-MM-DD>.md. Create dir if missing; if the filename already exists, suffix -2, -3... Read prior reports in docs/audits/ first, including <date>-<sha> run directories from orchestrated suites: mark persisting findings UNRESOLVED citing the prior report and ID; note previously reported findings now fixed. Leave uncommitted (maintainer owns git).
 Alongside the report, write <report-path>.findings.json -- machine-readable sidecar: top level {audit: "security", snapshot: {sha, dirty}}, findings[] with one entry per finding {id, severity, evidence, issue, scenario, file, line_start, line_end, recommended_direction, acceptance_check (Critical/High only)}. Redaction rules apply to the sidecar exactly as to the report. Same finding set as the report: the sidecar serves validators and fixing agents, the markdown serves humans.
-Every finding = stable ID within this report (S1, S2... severity order); a fixing agent cites these.
+Every finding = stable ID within this report (S1, S2... severity order); a fixing agent cites these. An ID is the prefix plus a plain integer only -- never suffixed or compound (no S-NEW-1, no S1a); new findings just continue the sequence. In the sidecar, severity matches the report's wording (Critical/High/Medium/Low).
 Sections, top-heavy (summary + model first, detail last):
 1. Summary table: ID | severity | category | one-line issue | evidence label.
 2. Threat model: assets, surfaces, actors, trust boundaries. Label load-bearing facts with evidence labels; a cross-audit synthesizer relies on them.
