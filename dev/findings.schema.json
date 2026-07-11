@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "fable-audits findings sidecar",
+  "description": "Machine-readable companion to a fable-audit markdown report. The sidecar's finding IDs must exactly match the report's summary table.",
+  "$defs": {
+    "evidenceLabel": { "enum": ["CONFIRMED", "PLAUSIBLE", "BLOCKED", "NOT REPRODUCED"] },
+    "severity": { "enum": ["critical", "high", "medium", "low"] }
+  },
+  "type": "object",
+  "required": ["audit", "snapshot", "findings"],
+  "properties": {
+    "audit": {
+      "enum": ["codebase", "docs", "process", "security", "change", "backlog"]
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["sha"],
+      "properties": {
+        "sha": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+        "dirty": { "type": "boolean" },
+        "base_ref": { "type": "string" },
+        "diff_checksum": { "type": "string" }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "issue"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[CDPSXF][1-9][0-9]*$" },
+          "severity": { "$ref": "#/$defs/severity" },
+          "evidence": { "$ref": "#/$defs/evidenceLabel" },
+          "evidence_provenance": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["cited_id", "evidence"],
+              "properties": {
+                "cited_id": { "type": "string" },
+                "evidence": { "$ref": "#/$defs/evidenceLabel" }
+              }
+            },
+            "description": "Backlog entries: per-source evidence labels, one per cited finding -- never collapsed into a single label"
+          },
+          "issue": { "type": "string", "description": "One-line statement of the defect" },
+          "scenario": { "type": "string", "description": "Concrete inputs/state -> wrong result" },
+          "behavioral_description": { "type": "string", "description": "Backlog entries: what breaks, not where" },
+          "file": { "type": "string" },
+          "line_start": { "type": "integer", "minimum": 1 },
+          "line_end": { "type": "integer", "minimum": 1 },
+          "reachability": { "type": "string", "description": "Public entry point vs internal misuse only (Critical/High)" },
+          "recommended_direction": { "type": "string" },
+          "acceptance_check": { "type": "string", "description": "Command/test/observation that fails now, passes once fixed" },
+          "cited_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Backlog entries: original finding IDs merged into this one"
+          },
+          "unresolved_from": { "type": "string", "description": "Prior report's ID when this finding persists across runs" }
+        },
+        "if": { "properties": { "severity": { "enum": ["critical", "high"] } }, "required": ["severity"] },
+        "then": { "required": ["acceptance_check"] }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "audit": { "const": "backlog" } } },
+      "then": {
+        "properties": {
+          "findings": {
+            "items": { "required": ["evidence_provenance", "cited_ids", "behavioral_description"] }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "findings": {
+            "items": { "required": ["evidence"] }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "audit": { "const": "change" } } },
+      "then": {
+        "properties": {
+          "snapshot": {
+            "anyOf": [
+              { "required": ["base_ref"] },
+              { "required": ["diff_checksum"] }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

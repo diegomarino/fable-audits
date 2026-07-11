@@ -1,0 +1,12 @@
+{
+  "name": "fable-audits",
+  "owner": { "name": "Diego" },
+  "metadata": { "version": "0.1.0" },
+  "plugins": [
+    {
+      "name": "fable-audits",
+      "source": "./",
+      "description": "Adversarial audit prompt suite with evidence labels, stable finding IDs, and a human-gated fix loop."
+    }
+  ]
+}

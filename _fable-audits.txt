@@ -1,0 +1,44 @@
+# fable-audits - adversarial audit specs - fetch & run
+#
+# Five audit specs plus two companions, each fully self-contained in commands/:
+# - audit-codebase.md: codebase/implementation audit.
+# - audit-docs.md: documentation audit.
+# - audit-process.md: end-to-end workflow/process audit.
+# - audit-security.md: system-level security + supply-chain audit.
+# - audit-change.md: diff-scoped change audit (working tree or --base <ref>).
+# - audit-full.md: orchestrator -- one fresh subagent per audit, then one synthesized fixes backlog.
+# - fix.md: fixing agent -- consumes a report/backlog by finding ID; human-gated, never touches git.
+#
+# Each file is frontmatter (for the Claude Code plugin) + the complete /goal-style
+# spec body. The launcher below only NAMES the file; the agent opens it with its
+# own Read tool, so spec size never hits the /goal limit.
+#
+# -- Install option A: Claude Code plugin --
+#   /plugin marketplace add diegomarino/fable-audits
+#   /plugin install fable-audits@fable-audits
+#   Then: /fable-audits:audit-codebase, :audit-docs, :audit-process,
+#         :audit-security, :audit-change --base origin/main, :audit-full,
+#         :fix docs/audits/<report>.md
+#
+# -- Install option B: fetch the flat files into ./.prompts/ (any harness) --
+# Run from your repo root. Re-run the same command to update (overwrites).
+
+git clone --depth 1 https://github.com/diegomarino/fable-audits /tmp/_p \
+  && mkdir -p .prompts && cp /tmp/_p/commands/*.md .prompts/ && rm -rf /tmp/_p
+
+# -- Run an audit - paste this /goal, swapping <PATH_TO_SPEC> --
+#   .prompts/audit-codebase.md   .prompts/audit-security.md
+#   .prompts/audit-docs.md       .prompts/audit-change.md
+#   .prompts/audit-process.md    .prompts/audit-full.md
+#   .prompts/fix.md
+#
+# Relative paths assume you launch from the dir you cloned into; use an absolute
+# path if CWD is uncertain.
+
+/goal Read <PATH_TO_SPEC> in full and execute its instructions to the letter - that file is your task spec, not reference to summarize or improve. Ignore its YAML frontmatter; the body is the spec. Stay strictly within the scope it defines: make no change it doesn't authorize, and do not commit, push, or touch git state. Not done until its Output/stop criteria are met exactly as written.
+
+# For fix.md, append the target to the same /goal, e.g.:
+#   ...as written. Target report: docs/audits/fixes-backlog-<date>.md; fix Critical/High only.
+#
+# For audit-change.md, name the diff target the same way, e.g.:
+#   ...as written. Target: --base origin/main   (or: working tree)

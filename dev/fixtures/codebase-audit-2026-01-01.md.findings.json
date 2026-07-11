@@ -1,0 +1,30 @@
+{
+  "audit": "codebase",
+  "snapshot": { "sha": "0123456789abcdef0123456789abcdef01234567", "dirty": false },
+  "findings": [
+    {
+      "id": "C1",
+      "severity": "high",
+      "evidence": "CONFIRMED",
+      "issue": "Off-by-one drops the last record of every batch",
+      "scenario": "A 100-record batch writes 99 records; loop bound `i < n - 1` at src/parse.js:42",
+      "file": "src/parse.js",
+      "line_start": 42,
+      "line_end": 42,
+      "reachability": "public entry point (CLI ingest path)",
+      "recommended_direction": "Fix the loop bound; add the batch-boundary regression test",
+      "acceptance_check": "node --test tests/parse.test.js"
+    },
+    {
+      "id": "C2",
+      "severity": "medium",
+      "evidence": "PLAUSIBLE",
+      "issue": "Default retry count contradicts documented value",
+      "scenario": "README promises 3 retries; src/config.js:7 sets 1",
+      "file": "src/config.js",
+      "line_start": 7,
+      "line_end": 7,
+      "recommended_direction": "Align the default with the docs, or fix the docs if 1 is intentional"
+    }
+  ]
+}

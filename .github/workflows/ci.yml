@@ -1,0 +1,26 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Specs carry the canonical invariants
+        run: node dev/scripts/lint-prompts.mjs
+      - name: Validator passes the codebase fixture
+        run: node dev/scripts/validate-report.mjs dev/fixtures/codebase-audit-2026-01-01.md
+      - name: Validator passes the backlog fixture
+        run: node dev/scripts/validate-report.mjs dev/fixtures/fixes-backlog-2026-01-01.md
+      - name: Validator handles reports nested in a run directory
+        run: node dev/scripts/validate-report.mjs dev/fixtures/2026-01-01-abcdefa/codebase-audit-2026-01-01.md
+      - name: Validator rejects wrong ID prefixes
+        run: |
+          ! node dev/scripts/validate-report.mjs dev/fixtures/docs-audit-bad-prefix.md
+      - name: Validator rejects Critical/High without acceptance check
+        run: |
+          ! node dev/scripts/validate-report.mjs dev/fixtures/codebase-audit-bad-acceptance.md

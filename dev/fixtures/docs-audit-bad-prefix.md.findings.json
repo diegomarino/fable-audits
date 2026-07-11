@@ -1,0 +1,13 @@
+{
+  "audit": "docs",
+  "snapshot": { "sha": "0123456789abcdef0123456789abcdef01234567", "dirty": false },
+  "findings": [
+    {
+      "id": "C1",
+      "severity": "high",
+      "evidence": "CONFIRMED",
+      "issue": "Quickstart command was renamed",
+      "acceptance_check": "bash README quickstart block"
+    }
+  ]
+}
