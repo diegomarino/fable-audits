@@ -4,7 +4,7 @@ Adversarial audit prompts for coding agents. Point an agent at a repo and get a
 severity-ordered, evidence-labeled findings report a fixing agent can execute —
 not a vibe check.
 
-Five audits, one orchestrator, one fixer:
+Six audits, one orchestrator, one fixer:
 
 | Spec | Scope | IDs | Report |
 |---|---|---|---|
@@ -12,6 +12,7 @@ Five audits, one orchestrator, one fixer:
 | `commands/audit-docs.md` | whole repo — drift, structure, coverage, findability | D | `docs/audits/docs-audit-<date>.md` |
 | `commands/audit-process.md` | whole repo — end-to-end workflows, re-runs, recovery, agent/CI ergonomics | P | `docs/audits/process-audit-<date>.md` |
 | `commands/audit-security.md` | whole repo — threat model, authn/authz, secrets, supply chain (defensive, own repo) | S | `docs/audits/security-audit-<date>.md` |
+| `commands/audit-ux.md` | whole repo — the shipped artifact's dialogue with its end user: input burden, messages, terminology, flow, recovery, feedback | U | `docs/audits/ux-audit-<date>.md` |
 | `commands/audit-change.md` | one diff — working tree or `--base <ref>`; ship / needs-attention verdict | X | `docs/audits/change-audit-<date>.md` |
 | `commands/audit-full.md` | orchestrator — one fresh subagent per audit, then one synthesized backlog | F | `docs/audits/fixes-backlog-<date>.md` |
 | `commands/fix.md` | executes findings by ID — re-verify, fix, prove, ledger | — | `<report>-fixes-<date>.md`, next to its report |
@@ -35,23 +36,19 @@ flat to `docs/audits/` with `-2`, `-3` collision suffixes.
 ```
 
 Then `/fable-audits:audit-codebase`, `:audit-docs`, `:audit-process`,
-`:audit-security`, `:audit-change --base origin/main`, `:audit-full`,
-`:fix docs/audits/<report>.md`.
+`:audit-security`, `:audit-ux`, `:audit-change --base origin/main`,
+`:audit-full`, `:fix docs/audits/<report>.md`.
 
 > If `marketplace add` fails with an SSH clone error, it's a known upstream
 > Claude Code issue (defaults to SSH for public repos); clone over HTTPS and
 > add the local path instead.
 
-**As flat files (any harness):**
-
-```bash
-git clone --depth 1 https://github.com/diegomarino/fable-audits /tmp/_p \
-  && mkdir -p .prompts && cp /tmp/_p/commands/*.md .prompts/ && rm -rf /tmp/_p
-```
-
-Then launch with the `/goal` pattern in [`_fable-audits.txt`](_fable-audits.txt) —
-the launcher only names the file; the agent reads the spec body from disk
-(frontmatter is ignorable outside Claude Code).
+**As flat files (any harness):** paste the single `/goal` from
+[`_fable-audits.txt`](_fable-audits.txt) — it clones the specs via `gh` to
+`/tmp` (outside the target repo: copying them into the project would dirty the
+tree and trip the suite's clean-tree preflight) and executes the named spec.
+The agent reads the spec body from disk; frontmatter is ignorable outside
+Claude Code.
 
 ## How it works
 

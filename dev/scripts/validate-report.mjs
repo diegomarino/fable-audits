@@ -36,6 +36,7 @@ const KIND = {
   'docs-audit': { prefix: 'D', audit: 'docs' },
   'process-audit': { prefix: 'P', audit: 'process' },
   'security-audit': { prefix: 'S', audit: 'security' },
+  'ux-audit': { prefix: 'U', audit: 'ux' },
   'change-audit': { prefix: 'X', audit: 'change' },
   'fixes-backlog': { prefix: 'F', audit: 'backlog' },
 };

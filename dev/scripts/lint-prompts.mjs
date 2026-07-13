@@ -32,6 +32,7 @@ const RULES = {
   'audit-docs.md': [...AUDIT, '(D1, D2'],
   'audit-process.md': [...AUDIT, '(P1, P2'],
   'audit-security.md': [...AUDIT, '(S1, S2'],
+  'audit-ux.md': [...AUDIT, '(U1, U2'],
   'audit-change.md': [...AUDIT, '(X1, X2'],
   'audit-full.md': [...SHARED, '(F1, F2', 'PARTIAL', 'fresh subagent'],
   'fix.md': [...SHARED, 'NEEDS-DECISION', 'acceptance check'],

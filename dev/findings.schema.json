@@ -10,7 +10,7 @@
   "required": ["audit", "snapshot", "findings"],
   "properties": {
     "audit": {
-      "enum": ["codebase", "docs", "process", "security", "change", "backlog"]
+      "enum": ["codebase", "docs", "process", "security", "ux", "change", "backlog"]
     },
     "snapshot": {
       "type": "object",
@@ -28,7 +28,7 @@
         "type": "object",
         "required": ["id", "severity", "issue"],
         "properties": {
-          "id": { "type": "string", "pattern": "^[CDPSXF][1-9][0-9]*$" },
+          "id": { "type": "string", "pattern": "^[CDPSUXF][1-9][0-9]*$" },
           "severity": { "$ref": "#/$defs/severity" },
           "evidence": { "$ref": "#/$defs/evidenceLabel" },
           "evidence_provenance": {

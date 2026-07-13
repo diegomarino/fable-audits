@@ -91,6 +91,7 @@ not the live tree.
 | D | commands/audit-docs.md | whole repo, documentation |
 | P | commands/audit-process.md | whole repo, end-to-end workflows |
 | S | commands/audit-security.md | whole repo, security + supply chain |
+| U | commands/audit-ux.md | whole repo, end-user experience of shipped surfaces |
 | X | commands/audit-change.md | diff-scoped |
 | F | fixes-backlog (audit-full synthesis) | cross-audit |
 

@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- New audit: audit-ux.md (U) -- the shipped artifact's dialogue with its end
+  user. Six hunt classes: input burden (data asked that the artifact could
+  infer), message quality, terminology coherence across live surfaces, flow
+  structure (late validation, dribbled questions, missing/superfluous
+  confirmation), recovery dialogue, feedback. Fail-fast applicability guard for
+  repos with no user-facing surface; boundary redirects to codebase
+  (DX/affordances), process (re-run mechanics), and docs (prose drift);
+  severity anchored in behavioral cost so taste findings die at the
+  anti-stylistic bar. Peer-reviewed (blind-debate); integrated across
+  conventions, lint, schema (U in the ID pattern, "ux" audit type), validator
+  KIND map, orchestrator, launcher, and README.
+
 - Structural test-blindness rule (from the fable-e2e run, where a green suite
   missed three defects): acceptance checks must exercise the state where the
   defect lives -- migrated/persisted schema or cross-process coordination --
