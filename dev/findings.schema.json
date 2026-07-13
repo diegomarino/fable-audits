@@ -44,6 +44,19 @@
             },
             "description": "Backlog entries: per-source evidence labels, one per cited finding -- never collapsed into a single label"
           },
+          "severity_provenance": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["cited_id", "severity"],
+              "properties": {
+                "cited_id": { "type": "string" },
+                "severity": { "$ref": "#/$defs/severity" }
+              }
+            },
+            "description": "Backlog entries whose cited severities diverge: per-source severities; the entry's severity is the highest cited"
+          },
           "issue": { "type": "string", "description": "One-line statement of the defect" },
           "scenario": { "type": "string", "description": "Concrete inputs/state -> wrong result" },
           "behavioral_description": { "type": "string", "description": "Backlog entries: what breaks, not where" },

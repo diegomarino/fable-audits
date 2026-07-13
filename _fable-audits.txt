@@ -20,22 +20,16 @@
 #         :audit-security, :audit-change --base origin/main, :audit-full,
 #         :fix docs/audits/<report>.md
 #
-# -- Install option B: fetch the flat files into ./.prompts/ (any harness) --
-# Run from your repo root. Re-run the same command to update (overwrites).
+# -- Run option B: zero-footprint single /goal (any harness with gh + shell) --
+# One paste does everything: the agent clones the specs to /tmp (OUTSIDE the
+# target repo -- copying them into the project would dirty the tree and trip
+# the suite's clean-tree preflight) and executes the named spec. gh handles
+# auth, so this works for private installs of this repo. Re-running re-clones
+# fresh, so you always audit with the latest specs. Swap <SPEC> for one of:
+#   audit-codebase  audit-docs  audit-process  audit-security
+#   audit-change    audit-full  fix
 
-git clone --depth 1 https://github.com/diegomarino/fable-audits /tmp/_p \
-  && mkdir -p .prompts && cp /tmp/_p/commands/*.md .prompts/ && rm -rf /tmp/_p
-
-# -- Run an audit - paste this /goal, swapping <PATH_TO_SPEC> --
-#   .prompts/audit-codebase.md   .prompts/audit-security.md
-#   .prompts/audit-docs.md       .prompts/audit-change.md
-#   .prompts/audit-process.md    .prompts/audit-full.md
-#   .prompts/fix.md
-#
-# Relative paths assume you launch from the dir you cloned into; use an absolute
-# path if CWD is uncertain.
-
-/goal Read <PATH_TO_SPEC> in full and execute its instructions to the letter - that file is your task spec, not reference to summarize or improve. Ignore its YAML frontmatter; the body is the spec. Stay strictly within the scope it defines: make no change it doesn't authorize, and do not commit, push, or touch git state. Not done until its Output/stop criteria are met exactly as written.
+/goal First run: rm -rf /tmp/fable-audits && gh repo clone diegomarino/fable-audits /tmp/fable-audits -- --depth 1. Then read /tmp/fable-audits/commands/<SPEC>.md in full and execute its instructions to the letter - that file is your task spec, not reference to summarize or improve. Ignore its YAML frontmatter; the body is the spec. Stay strictly within the scope it defines: make no change it doesn't authorize, and never commit, push, or touch git state in the project under audit (the /tmp clone above is the only git operation allowed). Not done until its Output/stop criteria are met exactly as written.
 
 # For fix.md, append the target to the same /goal, e.g.:
 #   ...as written. Target report: docs/audits/fixes-backlog-<date>.md; fix Critical/High only.

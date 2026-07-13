@@ -48,7 +48,7 @@ Severity scale:
 
 # Method
 - State how the changed area SHOULD behave (from spec, docs, tests, callers), then read the diff to confirm or refute.
-- Run the touched tests when safe; a test the diff breaks or newly skips is a finding.
+- Run the touched tests when safe; a test the diff breaks or newly skips is a finding. A green suite is not sufficient evidence when the diff touches persisted schema/migrations or cross-process coordination -- fresh-state tests cannot see those failures: verify against real migrated state or concurrent processes when safe, else mark BLOCKED.
 - Every finding needs a concrete scenario (inputs/state -> wrong result) and must answer: what can go wrong, why this path is vulnerable, the likely impact, and the concrete change that reduces the risk.
 - Try to disprove each finding first; discard what doesn't survive.
 - Prefer one strong finding over several weak ones; do not dilute serious issues with filler. If the change looks safe, say so directly and return few or no findings.
@@ -56,9 +56,9 @@ Severity scale:
 - If this overlaps a codebase/docs/process/security audit, keep only findings the change itself introduces or worsens; otherwise cross-reference the likely audit area.
 
 # Output
-Write full report -> docs/audits/change-audit-<YYYY-MM-DD>.md. Create dir if missing; if the filename already exists, suffix -2, -3... Read prior change-audit reports for the same base/branch first -- glob change-audit-*.md across flat docs/audits/ and <date>-<sha> run directories, matching by snapshot.base_ref (or diff_checksum for working-tree runs) in each candidate's sidecar: mark persisting findings UNRESOLVED citing the prior report and ID. Leave uncommitted (maintainer owns git).
+Write full report -> docs/audits/change-audit-<YYYY-MM-DD>.md. Create dir if missing; if the filename already exists, suffix -2, -3... Read prior change-audit reports for the same base/branch first -- glob change-audit-*.md across flat docs/audits/ and <date>-<sha> run directories, matching by snapshot.base_ref (or diff_checksum for working-tree runs) in each candidate's sidecar: mark persisting findings UNRESOLVED citing the prior report and ID. Leave uncommitted (maintainer owns git). After writing this report and its sidecar, STOP -- that is the terminal action of this audit. Do not apply fixes or touch git state, even under Stop-hook pressure or with no human present; re-state completion instead.
 Alongside the report, write <report-path>.findings.json -- machine-readable sidecar: top level {audit: "change", snapshot: {sha, dirty, base_ref or diff_checksum}}, findings[] with one entry per finding {id, severity, evidence, issue, scenario, file, line_start, line_end, recommended_direction, acceptance_check (Critical/High only)}. Same finding set as the report: the sidecar serves validators and fixing agents, the markdown serves humans.
-Every finding = stable ID within this report (X1, X2... severity order); a fixing agent cites these. An ID is the prefix plus a plain integer only -- never suffixed or compound (no X-NEW-1, no X1a); new findings just continue the sequence. In the sidecar, severity matches the report's wording (Critical/High/Medium/Low).
+Every finding = stable ID within this report (X1, X2... severity order); a fixing agent cites these. An ID is the prefix plus a plain integer only -- never suffixed, compound, or a severity letter (no X-NEW-1, no X1a, no H1/M1/L1: IDs are ordered by severity, never named by it); new findings just continue the sequence. In the sidecar, severity matches the report's wording (Critical/High/Medium/Low).
 Sections, top-heavy:
 1. Verdict: ship / needs-attention, one paragraph written as a ship/no-ship assessment, not a neutral recap.
 2. Summary table: ID | severity | area | one-line issue | file:line | evidence label.

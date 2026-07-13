@@ -55,6 +55,10 @@ not the live tree.
   likely impact, and the concrete change that reduces the risk.
 - Critical/High findings carry an **acceptance check**: the exact command,
   test, or observation that fails now and passes once fixed.
+- Acceptance checks exercise the state where the defect lives: for
+  migrated/persisted-schema or cross-process defects, a fresh-state test is
+  not evidence -- at audit time or fix time. A green suite is necessary,
+  never sufficient, for those classes.
 - Final check before writing: adversarial not stylistic, concrete location,
   real failure scenario, actionable. Cut what fails.
 - Prefer one strong finding over several weak ones; do not dilute serious
@@ -104,13 +108,18 @@ Casing and IDs (learned from the first live run): `severity` is written
 `Critical/High/Medium/Low` to match the prose scale, `evidence` UPPERCASE; the
 validator compares both case-insensitively so neither casing is load-bearing.
 A finding ID is a prefix plus a plain integer (`C1`, `P12`) -- never suffixed
-or compound (`P-NEW-1`, `C1a`). The validator finds the summary table as the
+or compound (`P-NEW-1`, `C1a`), and the prefix is fixed per audit type, never
+a severity letter (learned from the second live run: `H1`/`M1`/`L1` fail
+validation -- IDs are ordered by severity, never named by it). The validator
+finds the summary table as the
 first contiguous run of ID-prefixed rows, so the section heading text
 (`## 1. Summary table` vs `## 1 · Summary`) is not load-bearing either.
 
 Two audit-specific variants: backlog entries replace the single `evidence`
 with `evidence_provenance` (`[{cited_id, evidence}]`, one per merged source --
 evidence labels are never collapsed) plus `cited_ids` and
-`behavioral_description`; change-audit snapshots must carry `base_ref` (base-ref
+`behavioral_description` -- and when cited severities diverge, the entry ranks
+at the highest cited severity and carries `severity_provenance`
+(`[{cited_id, severity}]`, same shape); change-audit snapshots must carry `base_ref` (base-ref
 run) or `diff_checksum` (working-tree run) so the audited target stays
 identifiable.

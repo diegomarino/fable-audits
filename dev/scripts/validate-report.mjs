@@ -122,6 +122,18 @@ if (!existsSync(sidecarPath)) {
               if (!p.cited_id || !okEvidence(p.evidence)) errors.push(`${where}: bad provenance entry ${JSON.stringify(p)}`);
             }
           }
+          if (f.severity_provenance !== undefined) {
+            if (!Array.isArray(f.severity_provenance) || f.severity_provenance.length === 0) {
+              errors.push(`${where}: severity_provenance must be a non-empty [{cited_id, severity}] array`);
+            } else {
+              for (const p of f.severity_provenance) {
+                if (!p.cited_id || !okSeverity(p.severity)) errors.push(`${where}: bad severity_provenance entry ${JSON.stringify(p)}`);
+              }
+              const cited = new Set(f.severity_provenance.map((p) => String(p.severity).toLowerCase()));
+              const top = SEVERITY.find((s) => cited.has(s.toLowerCase()));
+              if (top !== undefined && String(f.severity).toLowerCase() !== top.toLowerCase()) errors.push(`${where}: severity "${f.severity}" must be the highest cited ("${top}")`);
+            }
+          }
           if (!Array.isArray(f.cited_ids) || !f.cited_ids.length) errors.push(`${where}: backlog entry needs cited_ids`);
           if (!f.behavioral_description) errors.push(`${where}: backlog entry needs behavioral_description`);
         } else if (!okEvidence(f.evidence)) {

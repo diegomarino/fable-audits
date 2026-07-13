@@ -2,6 +2,33 @@
 
 ## Unreleased
 
+- Structural test-blindness rule (from the fable-e2e run, where a green suite
+  missed three defects): acceptance checks must exercise the state where the
+  defect lives -- migrated/persisted schema or cross-process coordination --
+  at audit time and fix time; a fresh-state test is not evidence. Canonized in
+  conventions, enforced in audit-change's method, fix.md's PROVE, and
+  audit-codebase's test-confidence hunt (which also gains a non-pinning-tests
+  class: green even when the behavior they claim to pin is broken).
+- fix.md: new regression tests are proven by running them red with the fix
+  absent, and the ledger records both the red and green runs; the exec summary
+  now recommends a diff-scoped change audit of the working tree before merge
+  (fix-introduced defects are what the fixing agent cannot see).
+- Anti-severity-letter ID clause in all five audit specs, conventions, and
+  audit-full validation (from the second live run, where a subagent emitted
+  H1/M1/L1): the prefix is the audit type -- IDs are ordered by severity,
+  never named by it.
+- Repair-before-quarantine in audit-full Phase 2: mechanical/deterministic
+  validation failures get ONE re-message naming only the defect and required
+  format (never why a finding matters or what other audits found), then full
+  re-validation; content failures and second failures quarantine as before.
+- Severity divergence on merged backlog entries: rank at the highest cited
+  severity and record every cited severity with its source via
+  severity_provenance ([{cited_id, severity}]) -- schema and validator updated
+  (red/green tested).
+- Launcher: run option B is now a single /goal that clones via gh to /tmp
+  (outside the target repo -- copying specs into the project dirtied the tree
+  and tripped the clean-tree preflight) and executes the named spec.
+
 - Backlog output contract hardened (from a live run where the orchestrator wrote
   a non-conforming backlog): audit-full now mandates a summary table with
   ID-prefixed rows and the exact sidecar shape (`snapshot.sha` nested, `findings`
