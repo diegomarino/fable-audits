@@ -2,5 +2,5 @@
   "name": "fable-audits",
   "version": "0.1.0",
   "description": "Adversarial audit suite: whole-repo codebase/docs/process/security audits, a diff-scoped change audit, an orchestrator that synthesizes one fixes backlog, and a human-gated fixing agent. Evidence labels, stable finding IDs, acceptance checks.",
-  "author": { "name": "Diego" }
+  "author": { "name": "diegomarino" }
 }

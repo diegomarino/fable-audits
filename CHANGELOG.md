@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Backlog output contract hardened (from a live run where the orchestrator wrote
+  a non-conforming backlog): audit-full now mandates a summary table with
+  ID-prefixed rows and the exact sidecar shape (`snapshot.sha` nested, `findings`
+  array), and self-validates the backlog before replying.
+- Terminal-stop boundary: audit-full and all five audit specs now state the
+  report/backlog is the terminal deliverable and must not chain into fixes,
+  branches, or commits -- even under Stop-hook pressure or with no human present.
+  Fixes require a separate, explicit fix.md invocation. (Both autonomous live
+  runs continued past the backlog into applying fixes; the prompt body never
+  instructed it, but the boundary needed to survive an aggressive harness.)
+
 - Validator hardening from the first live run (full suite on a real repo): the
   report validator now finds the summary table by its ID-prefixed rows rather
   than a literal "Summary table" heading, and compares severity/evidence
