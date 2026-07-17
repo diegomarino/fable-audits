@@ -7,6 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: No pinned plugin version (SHA-mode -- every commit is a release)
+        run: |
+          if grep -rn '"version"' .claude-plugin/; then
+            echo "::error::Remove \"version\" from .claude-plugin/* -- a pinned version freezes installed users on their cached commit. SHA-mode (no version field) makes every commit a new version."
+            exit 1
+          fi
       - uses: actions/setup-node@v4
         with:
           node-version: 22

@@ -1,7 +1,7 @@
 {
   "name": "fable-audits",
   "owner": { "name": "diegomarino" },
-  "metadata": { "version": "0.1.0" },
+  "metadata": {},
   "plugins": [
     {
       "name": "fable-audits",
